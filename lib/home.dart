@@ -52,7 +52,8 @@ class HomeScreen extends StatelessWidget {
                         child: const Icon(Icons.people),
                       ),
                       const SizedBox(width: 10),
-                      const Text("All member"),
+                      const Text("All members"),
+                      //change one year
                     ],
                   ),
                 ),
