@@ -8,7 +8,6 @@ class MembersPage extends StatefulWidget {
 }
 
 class _MembersPageState extends State<MembersPage> {
-  // List of members with names and corresponding image URLs
   final List<Map<String, String>> members = [
     {'name': 'Jyoti', 'image': 'https://via.placeholder.com/150'},
     {'name': 'Anshika', 'image': 'https://via.placeholder.com/150'},
@@ -23,7 +22,7 @@ class _MembersPageState extends State<MembersPage> {
   @override
   void initState() {
     super.initState();
-    filteredMembers = members; // Initially show all members
+    filteredMembers = members; // Show all members initially
   }
 
   void updateSearch(String query) {
@@ -35,36 +34,75 @@ class _MembersPageState extends State<MembersPage> {
     });
   }
 
+  void showMembersStartingWith(String letter) {
+    setState(() {
+      filteredMembers = members
+          .where((member) => member['name']!.startsWith(letter))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
         title: const Text('Members'),
       ),
-      body: Column(
+      body: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Search Members',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search), // Add search icon here
-              ),
-              onChanged: updateSearch,
+          // Member List
+          Expanded(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Search Members',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.search),
+                    ),
+                    onChanged: updateSearch,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredMembers.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(filteredMembers[index]['image']!),
+                        ),
+                        title: Text(filteredMembers[index]['name']!),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredMembers.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(filteredMembers[index]['image']!), // Profile image
+          // Alphabet List on the right side
+          Container(
+            width: 40,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(26, (index) {
+                String letter = String.fromCharCode(index + 65); // A-Z
+                return GestureDetector(
+                  onTap: () => showMembersStartingWith(letter),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      letter,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue,
+                      ),
+                    ),
                   ),
-                  title: Text(filteredMembers[index]['name']!), // Member name
                 );
-              },
+              }),
             ),
           ),
         ],
