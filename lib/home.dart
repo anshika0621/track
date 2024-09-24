@@ -5,15 +5,22 @@ import 'package:untitled/route_travelled.dart';
 import 'package:untitled/member_page.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  // List of driver details with call types and times
+  final List<Map<String, String>> driverDetails = [
+    {'name': 'Anshika', 'outgoingTime': '10:30 AM', 'incomingTime': '09:15 AM'},
+    {'name': 'Jyoti', 'outgoingTime': '11:00 AM', 'incomingTime': '10:00 AM'},
+    {'name': 'Mehak', 'outgoingTime': '09:15 AM', 'incomingTime': '08:45 AM'},
+    {'name': 'Gaurav', 'outgoingTime': '12:45 PM', 'incomingTime': '11:30 AM'},
+    {'name': 'Saurabh', 'outgoingTime': '03:30 PM', 'incomingTime': '02:00 PM'},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar with title and dropdown menu attached to menu icon
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
-        // PopupMenuButton with icons and block items
         leading: PopupMenuButton<String>(
           icon: const Icon(Icons.menu, size: 24), // Menu icon
           onSelected: (value) {
@@ -24,25 +31,25 @@ class HomeScreen extends StatelessWidget {
               // Navigate to Timer page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()), // Replace with TimerPage
+                MaterialPageRoute(builder: (context) => HomeScreen()), // Replace with TimerPage
               );
             } else if (value == 'Activity Report') {
               // Navigate to Activity Report page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()), // Replace with ActivityReportPage
+                MaterialPageRoute(builder: (context) =>HomeScreen()), // Replace with ActivityReportPage
               );
             } else if (value == 'Timesheet') {
               // Navigate to Timesheet page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()), // Replace with TimesheetPage
+                MaterialPageRoute(builder: (context) =>  HomeScreen()), // Replace with TimesheetPage
               );
             } else if (value == 'Jobsite') {
               // Navigate to Jobsite page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()), // Replace with JobsitePage
+                MaterialPageRoute(builder: (context) =>  HomeScreen()), // Replace with JobsitePage
               );
             }
           },
@@ -103,66 +110,107 @@ class HomeScreen extends StatelessWidget {
             ];
           },
         ),
-        title: const Text("Attendance"), // Title of the page
+        title: const Text("Attendance"),
       ),
-      // Body of the page remains the same
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white38, // Background color for the container
+              color: Colors.grey, // Set background color to light grey
             ),
-            child: GestureDetector(
-              onTap: () {
-                // Navigate to MembersPage when tapped
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MembersPage()),
-                );
-              },
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withOpacity(0.3),
-                    child: const Icon(Icons.people),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to MembersPage when "All members" is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MembersPage()),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.blueAccent.withOpacity(0.3),
+                        child: const Icon(Icons.people),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text("All members"),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  const Text("All members"), // Label for the row
-                ],
-              ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Navigate to MembersPage when "Change Name" is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MembersPage()),
+                    );
+                  },
+                  child: const Text("Change", style: TextStyle(color: Colors.blue)),
+                ),
+              ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 2, // Number of list items
+              itemCount: driverDetails.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withOpacity(0.3),
-                    child: const Icon(Icons.person),
-                  ),
-                  title: const Text("Driver Name: Current Location"), // Placeholder text
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RouteMap()), // Replace with RouteMap
-                          );
-                        },
-                        icon: const Icon(Icons.calendar_month),
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blueAccent.withOpacity(0.3),
+                        child: const Icon(Icons.person),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          getLocation(context); // Call getLocation when pressed
-                        },
-                        icon: const Icon(Icons.my_location),
+                      title: Text(driverDetails[index]['name']!),
+                      subtitle: Row(
+                        children: [
+                          // Outgoing call
+                          Row(
+                            children: [
+                              const Icon(Icons.call_made, size: 16, color: Colors.green), // Outgoing call icon
+                              const SizedBox(width: 5),
+                              Text(driverDetails[index]['outgoingTime']!), // Outgoing call time
+                            ],
+                          ),
+                          const SizedBox(width: 20),
+                          // Incoming call
+                          Row(
+                            children: [
+                              const Icon(Icons.call_received, size: 16, color: Colors.red), // Incoming call icon
+                              const SizedBox(width: 5),
+                              Text(driverDetails[index]['incomingTime']!), // Incoming call time
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => RouteMap()),
+                              );
+                            },
+                            icon: const Icon(Icons.calendar_month),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              getLocation(context);
+                            },
+                            icon: const Icon(Icons.my_location),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Grey line separator
+                    const Divider(color: Colors.grey), // Add this line for separation
+                  ],
                 );
               },
             ),
@@ -172,7 +220,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Method to get the user's location
   Future<void> getLocation(BuildContext context) async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -200,7 +247,6 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  // Method to show a snackbar with a message
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -210,11 +256,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Method to navigate to the current location page
   void _navigateToCurrentLocation(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CurrentLocation()), // Replace with your current location page
+      MaterialPageRoute(builder: (context) =>  CurrentLocation()),
     );
   }
 }
